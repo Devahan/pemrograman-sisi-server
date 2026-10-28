@@ -17,6 +17,9 @@ class Course(models.Model):
 
     class Meta:
         ordering = ["code"]
+        indexes = [
+            models.Index(fields=["is_active", "title"]),
+        ]
 
     def __str__(self):
         return f"{self.code} - {self.title}"
@@ -62,11 +65,15 @@ class Submission(models.Model):
         Assignment, on_delete=models.CASCADE, related_name="submissions"
     )
     student = models.ForeignKey(
-        "users.User", on_delete=models.CASCADE, related_name="submissions"
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="submissions",
     )
     content = models.TextField(blank=True)
     submitted_at = models.DateTimeField(auto_now_add=True)
-    grade = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    grade = models.DecimalField(
+        max_digits=5, decimal_places=2, null=True, blank=True
+    )
 
     def __str__(self):
         return f"{self.student.username} -> {self.assignment.title}"

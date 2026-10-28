@@ -14,3 +14,10 @@ db.sqlite3
 # Editor
 .vscode/
 .idea/
+
+# Modul PDF & laporan Word (jangan di-commit)
+*.pdf
+*.docx
+~$*.docx
+*.tmp
+~WRL*.tmp

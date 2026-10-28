@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 import os
+import sys
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -39,7 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'users',
-    'catalog',
+    'catalog',  
+    'debug_toolbar',  
 ]
 
 MIDDLEWARE = [
@@ -50,7 +52,21 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
+INTERNAL_IPS = ["127.0.0.1"]
+
+# Debug Toolbar tidak boleh aktif saat `manage.py test` (debug_toolbar.E001).
+TESTING = "test" in sys.argv
+if TESTING:
+    INSTALLED_APPS.remove("debug_toolbar")
+    MIDDLEWARE.remove("debug_toolbar.middleware.DebugToolbarMiddleware")
+
+# Di Docker, IP browser terlihat sebagai IP gateway container (bukan 127.0.0.1),
+# jadi toolbar ditampilkan selama DEBUG aktif.
+DEBUG_TOOLBAR_CONFIG = {
+    "SHOW_TOOLBAR_CALLBACK": lambda request: DEBUG,
+}
 
 ROOT_URLCONF = 'config.urls'
 
